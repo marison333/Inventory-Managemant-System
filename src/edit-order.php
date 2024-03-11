@@ -51,27 +51,27 @@ $update = $con->query($sql1);
 
 $delInvoiceLine = "DELETE FROM order_line where order_id = $id";
 $update = $con->query($delInvoiceLine);
+if(isset($_POST['product'])) {
+    $total_products = count($_POST['product']);
 
-$total_products = count($_POST['product']);
+    for($i=0;$i<$total_products;$i++) {
+        $product =      $_POST['product'][$i];
+        $qty =          $_POST['qty'][$i];
 
-for($i=0;$i<$total_products;$i++) {
-    $product =      $_POST['product'][$i];
-    $qty =          $_POST['qty'][$i];
-
-    $sql2 = "INSERT INTO order_line(
-        order_id,
-        product_id,
-        quantity
-    )
-    VALUES ($id, $product, $qty)";
-    $sql3 = mysqli_query($con, $sql2);
-    
-    if(!$sql3) {
-        $error = true;
-        $error_msg = $error_msg.mysqli_error($con);
+        $sql2 = "INSERT INTO order_line(
+            order_id,
+            product_id,
+            quantity
+        )
+        VALUES ($id, $product, $qty)";
+        $sql3 = mysqli_query($con, $sql2);
+        
+        if(!$sql3) {
+            $error = true;
+            $error_msg = $error_msg.mysqli_error($con);
+        }
     }
 }
 
-if($sql2) {
-    header('Location:../public/order.php');
-}
+header('Location:../public/order.php');
+

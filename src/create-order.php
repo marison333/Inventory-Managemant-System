@@ -61,40 +61,41 @@ $sql1 = "INSERT INTO orders(
             '$billing_country',
             current_timestamp(), current_timestamp()
         )";
-echo $sql1;
+
 if ($con->query($sql1) === true) {
     $last_id = $con->insert_id;
 } else {
-    if(!$sql3) {
+    // give error
         header('Loaction:../public/create-order.php');
+    
+}
+
+if(isset($_POST['product'])) {
+    $total_products =       count($_POST['product']);
+    $total_qty =            count($_POST['qty']);
+
+
+    for($i=0;$i<$total_products;$i++) {
+        $product =      $_POST['product'][$i];
+        $qty =          $_POST['qty'][$i];
+
+        $sql2 = "INSERT INTO order_line(
+                    `order_id`,
+                    `product_id`,
+                    `quantity`
+                )
+                VALUES(
+                    $last_id,
+                    $product,
+                    $qty
+                )";
+        $sql4 = mysqli_query($con, $sql2);
+
+        if(!$sql4) {
+            header('Loaction:../public/create-order.php');
+        }
     }
 }
 
-$total_products =       count($_POST['product']);
-$total_qty =            count($_POST['qty']);
+header('Location: ../public/order.php');
 
-
-for($i=0;$i<$total_products;$i++) {
-    $product =      $_POST['product'][$i];
-    $qty =          $_POST['qty'][$i];
-
-    $sql2 = "INSERT INTO order_line(
-                `order_id`,
-                `product_id`,
-                `quantity`
-            )
-            VALUES(
-                $last_id,
-                $product,
-                $qty
-            )";
-    $sql3 = mysqli_query($con, $sql2);
-
-    if(!$sql3) {
-        header('Loaction:../public/create-order.php');
-    }
-}
-
-if($sql3) {
-    header('Location: ../public/order.php');
-}
